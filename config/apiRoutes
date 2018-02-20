@@ -1,0 +1,2 @@
+/user UserR GET POST
+/user/#Text UserPasswordR PATCH

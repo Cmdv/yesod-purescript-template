@@ -1,5 +1,5 @@
 {-# LANGUAGE PackageImports #-}
-import "cmdvme" Application (develMain)
+import "yesod-rest" Application (develMain)
 import Prelude (IO)
 
 main :: IO ()

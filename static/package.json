@@ -1,0 +1,10 @@
+{
+    "private": true,
+    "scripts": {
+      "build": "pulp build --to build/bundle.js",
+      "watch": "pulp --watch build --to build/bundle.js"
+    },
+    "dependencies": {
+        "purescript": "^0.11.7"
+    }
+}

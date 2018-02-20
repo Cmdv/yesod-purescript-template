@@ -1,8 +1,4 @@
-{-# LANGUAGE CPP               #-}
-{-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecordWildCards   #-}
-{-# LANGUAGE TemplateHaskell   #-}
+{-# Language CPP #-}
 -- | Settings are centralized, as much as possible, into this file. This
 -- includes database connection settings, static file locations, etc.
 -- In addition, you can configure a number of different aspects of Yesod
@@ -10,19 +6,18 @@
 -- declared in the Foundation.hs file.
 module Settings where
 
-import           ClassyPrelude.Yesod
-import qualified Control.Exception           as Exception
-import           Data.Aeson                  (Result (..), fromJSON, withObject,
-                                              (.!=), (.:?))
-import           Data.FileEmbed              (embedFile)
-import           Data.Yaml                   (decodeEither')
-import           Database.Persist.Postgresql (PostgresConf)
-import           Language.Haskell.TH.Syntax  (Exp, Name, Q)
-import           Network.Wai.Handler.Warp    (HostPreference)
-import           Yesod.Default.Config2       (applyEnvValue, configSettingsYml)
-import           Yesod.Default.Util          (WidgetFileSettings,
-                                              widgetFileNoReload,
-                                              widgetFileReload)
+import ClassyPrelude.Yesod         hiding (throw)
+import Control.Exception           (throw)
+import Data.Aeson                  (Result (..), fromJSON, withObject, (.!=),
+                                    (.:?))
+import Data.FileEmbed              (embedFile)
+import Data.Yaml                   (decodeEither')
+import Database.Persist.Postgresql (PostgresConf)
+import Language.Haskell.TH.Syntax  (Exp, Name, Q)
+import Network.Wai.Handler.Warp    (HostPreference)
+import Yesod.Default.Config2       (applyEnvValue, configSettingsYml)
+import Yesod.Default.Util          (WidgetFileSettings, widgetFileNoReload,
+                                    widgetFileReload)
 
 -- | Runtime settings to configure this application. These settings can be
 -- loaded from various sources: defaults, environment variables, config files,
@@ -59,15 +54,12 @@ data AppSettings = AppSettings
     -- ^ Copyright text to appear in the footer of the page
     , appAnalytics              :: Maybe Text
     -- ^ Google Analytics code
-
-    , appAuthDummyLogin         :: Bool
-    -- ^ Indicate if auth dummy login should be enabled.
     }
 
 instance FromJSON AppSettings where
     parseJSON = withObject "AppSettings" $ \o -> do
         let defaultDev =
-#ifdef DEVELOPMENT
+#if DEVELOPMENT
                 True
 #else
                 False
@@ -79,18 +71,14 @@ instance FromJSON AppSettings where
         appPort                   <- o .: "port"
         appIpFromHeader           <- o .: "ip-from-header"
 
-        dev                       <- o .:? "development"      .!= defaultDev
+        appDetailedRequestLogging <- o .:? "detailed-logging" .!= defaultDev
+        appShouldLogAll           <- o .:? "should-log-all"   .!= defaultDev
+        appReloadTemplates        <- o .:? "reload-templates" .!= defaultDev
+        appMutableStatic          <- o .:? "mutable-static"   .!= defaultDev
+        appSkipCombining          <- o .:? "skip-combining"   .!= defaultDev
 
-        appDetailedRequestLogging <- o .:? "detailed-logging" .!= dev
-        appShouldLogAll           <- o .:? "should-log-all"   .!= dev
-        appReloadTemplates        <- o .:? "reload-templates" .!= dev
-        appMutableStatic          <- o .:? "mutable-static"   .!= dev
-        appSkipCombining          <- o .:? "skip-combining"   .!= dev
-
-        appCopyright              <- o .:  "copyright"
+        appCopyright              <- o .: "copyright"
         appAnalytics              <- o .:? "analytics"
-
-        appAuthDummyLogin         <- o .:? "auth-dummy-login"      .!= dev
 
         return AppSettings {..}
 
@@ -122,8 +110,7 @@ configSettingsYmlBS = $(embedFile configSettingsYml)
 
 -- | @config/settings.yml@, parsed to a @Value@.
 configSettingsYmlValue :: Value
-configSettingsYmlValue = either Exception.throw id
-                       $ decodeEither' configSettingsYmlBS
+configSettingsYmlValue = either throw id $ decodeEither' configSettingsYmlBS
 
 -- | A version of @AppSettings@ parsed at compile time from @config/settings.yml@.
 compileTimeAppSettings :: AppSettings

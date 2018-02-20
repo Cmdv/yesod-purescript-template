@@ -1,8 +1,7 @@
-{-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE OverloadedStrings #-}
 module Handler.CommentSpec (spec) where
 
 import TestImport
+import Resolve
 import Data.Aeson
 
 spec :: Spec

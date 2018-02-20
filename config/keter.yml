@@ -15,8 +15,8 @@ stanzas:
     #
     # The path given is for Stack projects. If you're still using cabal, change
     # to
-    # exec: ../dist/build/cmdvme/cmdvme
-    exec: ../dist/bin/cmdvme
+    # exec: ../dist/build/yesod-rest/yesod-rest
+    exec: ../dist/bin/yesod-rest
 
     # Command line options passed to your application.
     args: []
@@ -25,7 +25,7 @@ stanzas:
       # You can specify one or more hostnames for your application to respond
       # to. The primary hostname will be used for generating your application
       # root.
-      - www.cmdvme.com
+      - www.yesod-rest.com
 
     # Enable to force Keter to redirect to https
     # Can be added to any stanza
@@ -34,7 +34,7 @@ stanzas:
   # Static files.
   - type: static-files
     hosts:
-      - static.cmdvme.com
+      - static.yesod-rest.com
     root: ../static
 
     # Uncomment to turn on directory listings.
@@ -44,9 +44,9 @@ stanzas:
   - type: redirect
 
     hosts:
-      - cmdvme.com
+      - yesod-rest.com
     actions:
-      - host: www.cmdvme.com
+      - host: www.yesod-rest.com
         # secure: false
         # port: 80
 
