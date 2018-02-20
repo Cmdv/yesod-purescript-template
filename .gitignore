@@ -25,5 +25,6 @@ static/.pulp-cache/
 static/.psc*
 static/.purs*
 static/.psa*
+static/yarn.lock
 
 npm-debug.log
